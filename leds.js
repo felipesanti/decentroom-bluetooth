@@ -5,7 +5,7 @@
  * - https://github.com/jperkin/node-rpio
  * - modified by Felipe Santi and Enrique Melero
  * how to use:
- * $ node leds.js [green | yellow | red]
+ * $ node leds.js [green | yellow | red | all]
  */
 
 // requires
@@ -37,7 +37,7 @@ var blinkLed = function(pin) {
 // read from the command line which led to blink
 var ledToBlink = process.argv[2];
 if (ledToBlink === undefined) {
-	console.error('ERROR: missing led to blink [green | yellow | red]');
+	console.error('ERROR: missing led to blink [green | yellow | red | all]');
 } else {
 	switch(ledToBlink) {
 		case 'green':
@@ -49,8 +49,12 @@ if (ledToBlink === undefined) {
 		case 'red':
 			blinkLed(redLed);
 			break;
+		case 'all':
+			blinkLed(greenLed);
+			blinkLed(yellowLed);
+			blinkLed(redLed);
 		default:
-			console.error('ERROR: led to blink must be [green | yellow | red]');
+			console.error('ERROR: led to blink must be [green | yellow | red | all]');
 
 	}
 };
