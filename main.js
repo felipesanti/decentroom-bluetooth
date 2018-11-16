@@ -14,14 +14,14 @@ var _nonceLength = 21;
 var _beginStrChallenge = ':BEGIN:';
 var _endStrChallenge = ':END:';
 var _timeLimitMillis = 30000; // 60 seconds
-var _mockChallengeSolution = "inventrip";
+var _mockChallengeSolution = "DECENTROOM";
 
 // parameters
 var _timeStr;
 var _timeStartMillis;
 var _timeStopMillis;
 var _timeElapsedMillis;
-var _currentNonce;
+var _roomAddress;
 var _fullChallenge;
 var _POV;
 var _POV_STATE;
@@ -42,6 +42,7 @@ var reset_challenge = function() {
     _timeStopMillis = 0;
     _timeElapsedMillis = 0;
     _timeStr = new Date().toISOString();
+    _roomAddress = process.argv[2];
 }
 
 // Advertise the BLE adrress when bleno start
@@ -49,7 +50,7 @@ bleno.on('stateChange', function(state) {
     console.log('State change: ' + state);
         if(state === 'poweredOn') {
         reset_challenge();
-        bleno.startAdvertising('RaspberryPi',['12ab']);
+        bleno.startAdvertising('RaspiTeamNumber',['12ab']);
         } else {
         bleno.stopAdvertising();
         }
@@ -58,7 +59,7 @@ bleno.on('stateChange', function(state) {
 // Log when accepting connections
 bleno.on('accept', function(clientAddress) {
     console.log('Accepted connection from address: ' + clientAddress);
-    console.log('Current GMT time: ' + _timeStr.replace(/T/,' '));
+    console.log('Current GMT time: ' + (new Date().toISOString()).replace(/T/,' '));
 });
 
 // Disconnect callback: reset the challenge
@@ -86,19 +87,15 @@ bleno.on('advertisingStart', function(error) {
                     descriptors: [
                         new bleno.Descriptor({
                             uuid: '0001',
-                            value: 'Proof of Visit entry: serves a nonce string'
+                            value: 'Decentroom Testnet Bitcoin address'
                         })
                     ],
                     // on read request, send a message back with the Nonce and reset the challenge
                     onReadRequest: function(offset, callback) {
-                        _currentNonce = crypto.nonce(_nonceLength); // generates random nonce
+			callback(this.RESULT_SUCCESS, new Buffer(_roomAddress));
                         console.log("****************************************");
-                        console.log("Proof of Visit read: nonce is: " + _currentNonce);
-                        reset_challenge();
-                        console.log('Current GMT time: ' + _timeStr.replace(/T/,' '));
-                        console.log("Maximum time to solve the challenge is: " + 
-                                (_timeLimitMillis / 1000).toString() + " seconds");
-                        callback(this.RESULT_SUCCESS, new Buffer(_currentNonce));
+                        console.log("Decentroom address: " + _roomAddress);
+                        console.log("****************************************");
                     }
                 }),
                 // CHARACTERISTIC 2. Receive and check client submission
@@ -168,13 +165,13 @@ bleno.on('advertisingStart', function(error) {
                     descriptors: [
                         new bleno.Descriptor({
                             uuid: '0001',
-                            value: 'Receive here your POV notification'
+                            value: 'Receive here your Decentroom notification'
                         })
                     ],
                     // on subscription request, log to the console
                     onSubscribe: function(maxValueSize, updateValueCallback) {
                         console.log("****************************************");
-                        console.log("Subscribed to the POV notification characteristic");
+                        console.log("Subscribed to the Decentroom notification characteristic");
                         this.intervalId = setInterval(function() {
                             // Send the POV once it is available
                             if (_POV_STATE == _POV_STATE_SUCCESS) {
@@ -186,7 +183,7 @@ bleno.on('advertisingStart', function(error) {
                     // on unsubscriptioni, log into the console
                     onUnsubscribe: function(offset, callback) {
                         clearInterval(this.intervalId);
-                        console.log("Unsubscribed to the POV notification characteristic");
+                        console.log("Unsubscribed to the Decentroom notification characteristic");
                     }
                 })
             ]
