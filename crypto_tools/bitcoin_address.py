@@ -4,7 +4,7 @@
 
 import bitcoin
 
-mockup = True
+mockup = False
 
 # generate a random key
 valid_private_key = False
