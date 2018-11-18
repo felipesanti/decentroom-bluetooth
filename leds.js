@@ -20,7 +20,7 @@ rpio.open(greenLed, rpio.OUTPUT, rpio.LOW);
 rpio.open(yellowLed, rpio.OUTPUT, rpio.LOW);
 rpio.open(redLed, rpio.OUTPUT, rpio.LOW);
 
-// create a generic function to blink a Led forever
+// create a generic function to blink a Led 5 times
 var blinkLed = function(pin) {
 	for (var i = 0; i < 5; i++) {
 		// on for 1 second (1000 ms)
