@@ -50,7 +50,7 @@ bleno.on('stateChange', function(state) {
     console.log('State change: ' + state);
         if(state === 'poweredOn') {
         reset_challenge();
-        bleno.startAdvertising('RaspiTeamNumber',['12ab']);
+        bleno.startAdvertising('RaspiRoom18',['12ab']);
         } else {
         bleno.stopAdvertising();
         }
